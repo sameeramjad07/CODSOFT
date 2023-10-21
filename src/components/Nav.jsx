@@ -13,6 +13,7 @@ const Nav = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
+
     useEffect(() => {
         function handleResize() {
             const width = window.innerWidth;
@@ -82,15 +83,15 @@ const Nav = () => {
                 </div>
             </nav>
             }
+
             {screenSize === "mobile" &&
                 <nav className="bg-white shadow-md">
                     <div className="container mx-auto flex justify-between items-center p-4">
                         <a href="/" className="text-primary">
                             <img src={headerLogo} alt="logo" width={130} height={29} />
                         </a>
-
-                        <div className="">
-                            <button className="p-2" onClick={() => handleMenuToggle()}>
+                        <div className="" onClick={() => handleMenuToggle()}>
+                            <button className="p-2" >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
@@ -109,11 +110,11 @@ const Nav = () => {
                         </div>
 
                         {isMenuOpen && (
-                            <div className=" block absolute top-16 right-0 mt-2 p-2 space-y-2 bg-white border shadow-lg">
-                                <ul>
+                            <div id="men" className="transition-opacity duration-1000 ease-in-out block absolute top-14 right-0 mt-2 p-2 space-y-2 bg-white w-40 h-64 z-50 border shadow-lg">
+                                <ul className='flex-col h-full w-full justify-around rounded-xl '>
                                 {navLinks.map((item) => (
-                                <li key={item.label}>
-                                    <a  onClick={()=>console.log("Clicked")}
+                                <li key={item.label} className='p-2 hover:bg-slate-100 rounded-lg'>
+                                    <a  
                                         href={item.href}
                                         className="text-slate-grey font-bold text-xl hover:text-neutral-600 transition duration-300"
                                     >
