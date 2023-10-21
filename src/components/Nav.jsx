@@ -1,73 +1,136 @@
 import { headerLogo } from '../assets/images';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa'; // Import hamburger and close icons
 import { navLinks } from '../constants';
+import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 
 const Nav = () => {
-    const [hamburgerMenu, setHamburger] = useState(false);
 
-    const toggleHamburger = () => {
-        setHamburger(!hamburgerMenu);
+    const [screenSize, setScreenSize] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const handleMenuToggle = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
-   
-    const handleClick = (event) => {
-          // Access the id of the clicked element using event.target.id
-          const clickedElementId = event.target.id;
-          console.log('Clicked element ID:', clickedElementId);
+
+    useEffect(() => {
+        function handleResize() {
+            const width = window.innerWidth;
+            if (width < 768) {
+                setScreenSize('mobile');
+            } else if (width >= 768 && width < 1024) {
+                setScreenSize('tablet');
+            } else {
+                setScreenSize('desktop');
+            }
+        }
+
+        handleResize(); // Initial check
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
         };
+    }, []);
 
     return (
-        <header id='saad' className="px-4 py-4 sm:py-8 absolute top-0 left-0 right-0 z-10 bg-white" onClick={handleClick}>
-            <nav className="container mx-auto flex justify-between items-center">
-                <a href="/">
-                    <img src={headerLogo} alt="logo" width={130} height={29} />
-                </a>
-                <div className="lg:hidden">
-                    {hamburgerMenu ? (
-                        <FaBars
-                            className="text-2xl text-black cursor-pointer"
-                            onClick={toggleHamburger}
-                        />
-                    ) : (
-                        <FaBars
-                            className="text-2xl text-black cursor-pointer"
-                            onClick={toggleHamburger}
-                        />
-                    )}
-                </div>
-                <div className="md:hidden sm:hidden lg:flex ">
-                    <ul className="lg:flex space-x-6 md:hidden sm:hidden">
-                        {navLinks.map((item) => (
-                            <li key={item.label}>
-                                <a
-                                    href={item.href}
-                                    className="font-montserrat text-lg text-slate-grey hover:text-primary transition duration-300"
-                                >
-                                    {item.label}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
+        <div>
+            {screenSize === "desktop" &&
+                <nav className="bg-white shadow-md w-full">
+                    <div className="container mx-auto flex justify-between items-center p-4">
+                        <a href="/" className="text-primary">
+                            <img src={headerLogo} alt="logo" width={130} height={29} />
+                        </a>
+
+                        <div className=" flex space-x-6  w-full justify-center">
+                            <ul className="flex space-x-4">
+                                {navLinks.map((item) => (
+                                    <li key={item.label}>
+                                        <a
+                                            href={item.href}
+                                            className="text-slate-grey text-2xl hover:text-neutral-500 transition duration-300 ml-16 font-bold"
+                                        >
+                                            {item.label}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            }
+
+            {screenSize === "tablet" && <nav className="bg-white shadow-md">
+                <div className="container mx-auto flex justify-between items-center p-4">
+                    <a href="/" className="text-primary">
+                        <img src={headerLogo} alt="logo" width={130} height={29} />
+                    </a>
+
+                    <div className="hidden md:flex space-x-6">
+                        <ul className="flex space-x-4">
+                            {navLinks.map((item) => (
+                                <li key={item.label}>
+                                    <a
+                                        href={item.href}
+                                        className="text-slate-grey font-bold text-xl hover:text-neutral-600 transition duration-300"
+                                    >
+                                        {item.label}
+                                    </a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
             </nav>
-            {hamburgerMenu && (
-                <div id='ham' className="bg-white max-w-sm h-screen z-50 fixed top-0 right-0 transition-transform transform translate-x-0 ease-in-out">
-                    <ul className="py-12 px-4" id='ham'>
-                        {navLinks.map((item) => (
-                            <li key={item.label}>
-                                <a
-                                    href={item.href}
-                                    className="block font-montserrat text-xl text-slate-grey py-3 hover:text-neutral-800"
-                                    onClick={toggleHamburger}
+            }
+            {screenSize === "mobile" &&
+                <nav className="bg-white shadow-md">
+                    <div className="container mx-auto flex justify-between items-center p-4">
+                        <a href="/" className="text-primary">
+                            <img src={headerLogo} alt="logo" width={130} height={29} />
+                        </a>
+
+                        <div className="">
+                            <button className="p-2" onClick={() => handleMenuToggle()}>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    className="h-6 w-6"
                                 >
-                                    {item.label}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </header>
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M4 6h16M4 12h16M4 18h16"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {isMenuOpen && (
+                            <div className=" block absolute top-16 right-0 mt-2 p-2 space-y-2 bg-white border shadow-lg">
+                                <ul>
+                                {navLinks.map((item) => (
+                                <li key={item.label}>
+                                    <a  onClick={()=>console.log("Clicked")}
+                                        href={item.href}
+                                        className="text-slate-grey font-bold text-xl hover:text-neutral-600 transition duration-300"
+                                    >
+                                        {item.label}
+                                    </a>
+                                </li>
+                            ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                </nav>
+
+            }
+
+
+        </div>
     );
 };
 
